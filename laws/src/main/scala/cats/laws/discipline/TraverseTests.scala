@@ -15,6 +15,7 @@ trait TraverseTests[F[_]] extends FunctorTests[F] with FoldableTests[F] {
     ArbYB: Arbitrary[Y[B]],
     ArbYC: Arbitrary[Y[C]],
     M: Monoid[M],
+    EqA: Eq[A],
     EqFA: Eq[F[A]],
     EqFC: Eq[F[C]],
     EqM: Eq[M],

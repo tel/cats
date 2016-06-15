@@ -278,6 +278,12 @@ import simulacrum.typeclass
   def nonEmpty[A](fa: F[A]): Boolean =
     !isEmpty(fa)
 
+  def headOption[A](fa: F[A]): Option[A] =
+    foldRight(fa, Eval.now(Option.empty[A]))((a, _) => Eval.now(Some(a))).value
+
+  def lastOption[A](fa: F[A]): Option[A] =
+    foldLeft(fa, Option.empty[A])((_, a) => Some(a))
+
   def compose[G[_]: Foldable]: Foldable[λ[α => F[G[α]]]] =
     new ComposedFoldable[F, G] {
       val F = self

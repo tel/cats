@@ -10,8 +10,8 @@ import cats.data.Xor
 
 trait ListInstances extends cats.kernel.std.ListInstances {
 
-  implicit val catsStdInstancesForList: Traverse[List] with MonadCombine[List] with MonadRec[List] with CoflatMap[List] =
-    new Traverse[List] with MonadCombine[List] with MonadRec[List] with CoflatMap[List] {
+  implicit val catsStdInstancesForList: Traverse[List] with Unfoldable[List] with MonadCombine[List] with MonadRec[List] with CoflatMap[List] =
+    new Traverse[List] with Unfoldable[List] with MonadCombine[List] with MonadRec[List] with CoflatMap[List] {
 
       def empty[A]: List[A] = Nil
 
@@ -61,6 +61,21 @@ trait ListInstances extends cats.kernel.std.ListInstances {
             case h :: t => f(h, Eval.defer(loop(t)))
           }
         Eval.defer(loop(fa))
+      }
+
+      def unfoldRight[A, B](seed: B)(f: B => Eval[Option[(A, B)]]): Eval[List[A]] =
+        f(seed).flatMap(_ match {
+          case None         => Eval.now(Nil)
+          case Some((a, b)) => unfoldRight(b)(f).map(a :: _)
+        })
+
+      def unfoldLeft[A, B](seed: B)(f: B => Option[(B, A)]): List[A] = {
+        @tailrec def loop(seed: B)(xs: List[A]): List[A] = f(seed) match {
+          case None         => xs
+          case Some((b, a)) => loop(b)(a :: xs)
+        }
+
+        loop(seed)(Nil)
       }
 
       def traverse[G[_], A, B](fa: List[A])(f: A => G[B])(implicit G: Applicative[G]): G[List[B]] =

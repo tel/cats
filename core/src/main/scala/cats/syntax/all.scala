@@ -36,6 +36,7 @@ trait AllSyntax
     with StrongSyntax
     with TransLiftSyntax
     with TraverseSyntax
+    with UnfoldableSyntax
     with XorSyntax
     with ValidatedSyntax
     with CoproductSyntax

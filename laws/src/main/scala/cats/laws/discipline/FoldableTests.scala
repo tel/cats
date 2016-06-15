@@ -5,12 +5,14 @@ package discipline
 import org.scalacheck.Arbitrary
 import org.scalacheck.Prop._
 import org.typelevel.discipline.Laws
+import cats.std.option._
 
 trait FoldableTests[F[_]] extends Laws {
   def laws: FoldableLaws[F]
 
   def foldable[A: Arbitrary, B: Arbitrary](implicit
     ArbFA: Arbitrary[F[A]],
+    EqA: Eq[A],
     B: Monoid[B],
     EqB: Eq[B]
   ): RuleSet = {
@@ -23,7 +25,9 @@ trait FoldableTests[F[_]] extends Laws {
       "forall consistent with exists" -> forAll(laws.forallConsistentWithExists[A] _),
       "forall true if empty" -> forAll(laws.forallEmpty[A] _),
       "exists is lazy" -> forAll(laws.existsLazy[A] _),
-      "forall is lazy" -> forAll(laws.forallLazy[A] _)
+      "forall is lazy" -> forAll(laws.forallLazy[A] _),
+      "headOption consistent with toList" -> forAll(laws.headOptionConsistentWithToList[A] _),
+      "lastOption consistent with toList" -> forAll(laws.lastOptionConsistentWithToList[A] _)
     )
   }
 }

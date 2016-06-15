@@ -36,6 +36,7 @@ package object syntax {
   object strong extends StrongSyntax
   object transLift extends TransLiftSyntax
   object traverse extends TraverseSyntax
+  object unfoldable extends UnfoldableSyntax
   object xor extends XorSyntax
   object validated extends ValidatedSyntax
   object writer extends WriterSyntax

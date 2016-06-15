@@ -2,7 +2,7 @@ package cats
 package tests
 
 import cats.data.NonEmptyList
-import cats.laws.discipline.{TraverseTests, CoflatMapTests, MonadCombineTests, SerializableTests, CartesianTests}
+import cats.laws.discipline.{TraverseTests, CoflatMapTests, MonadCombineTests, SerializableTests, UnfoldableTests, CartesianTests}
 import cats.laws.discipline.arbitrary._
 
 class ListTests extends CatsSuite {
@@ -18,6 +18,9 @@ class ListTests extends CatsSuite {
 
   checkAll("List[Int] with Option", TraverseTests[List].traverse[Int, Int, Int, List[Int], Option, Option])
   checkAll("Traverse[List]", SerializableTests.serializable(Traverse[List]))
+
+  checkAll("List[Int]", UnfoldableTests[List].unfoldable[Int, Int])
+  checkAll("Unfoldable[List]", SerializableTests.serializable(Unfoldable[List]))
 
   test("nel => list => nel returns original nel")(
     forAll { fa: NonEmptyList[Int] =>

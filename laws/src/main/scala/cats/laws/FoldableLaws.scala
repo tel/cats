@@ -65,13 +65,20 @@ trait FoldableLaws[F[_]] {
     } else true // can't test much in this case
   }
 
+  def headOptionConsistentWithToList[A](fa: F[A]): IsEq[Option[A]] =
+    fa.headOption <-> fa.toList.headOption
+
+  def lastOptionConsistentWithToList[A](fa: F[A]): IsEq[Option[A]] =
+    fa.lastOption <-> fa.toList.lastOption
+
+
   /**
-   * If `F[A]` is empty, forall must return true.
-   */
+    * If `F[A]` is empty, forall must return true.
+    */
   def forallEmpty[A](
-    fa: F[A],
-    p: A => Boolean
-  ): Boolean = {
+                      fa: F[A],
+                      p: A => Boolean
+                    ): Boolean = {
     !F.isEmpty(fa) || F.forall(fa)(p)
   }
 }
