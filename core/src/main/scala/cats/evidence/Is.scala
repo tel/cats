@@ -51,6 +51,16 @@ abstract class Is[A, B] extends Serializable {
     substitute[λ[α => F[A] Is F[α]]](Is.refl)
 
   /**
+    * Sometimes you need to substitute values within a two type parameter
+    * type constructor of the form `F[_, _]`. We can achieve this by providing
+    * a `A2 Is B2` proof for the second type parameter.
+    */
+  @inline final def lift2[F[_, _], A2, B2](is2: A2 Is B2): F[A, A2] Is F[B, B2] =
+    is2.substitute[λ[α => F[A, A2] Is F[B, α]]](
+      substitute[λ[α => F[A, A2] Is F[α, A2]]](
+        Is.refl))
+
+  /**
    * Substitution on identity brings about a direct coercion function of the
    * same form that `=:=` provides.
    */
